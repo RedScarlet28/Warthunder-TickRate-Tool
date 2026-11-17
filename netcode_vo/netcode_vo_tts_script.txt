@@ -1,0 +1,56 @@
+### s0_cold_open
+<|speaker:0|> [calm, a little puzzled] If you play War Thunder, you've seen this. You aim, you fire, the shell clearly reaches the target... and the game acts like it never happened.
+<|speaker:0|> [explaining] The community calls these ghost shells. Sometimes the shell just vanishes. Sometimes you even get the explosion and the sound, and still no damage.
+<|speaker:2|> [dry] And sometimes the shell goes straight through a tank, as if the tank isn't really there. [short pause] Which, it turns out, is exactly the problem.
+<|speaker:0|> This player went as far as checking the server replay, which is supposed to be the ground truth. Even there, the shell passes through.
+<|speaker:5|> [intrigued] And in the air it gets stranger. Here the enemy's cannon rounds look like they're steering themselves.
+<|speaker:2|> [slightly sarcastic] Whenever this comes up, someone explains it in one sentence: "War Thunder runs at ten tick."
+<|speaker:0|> [thoughtful] That always sounded too simple to me. So instead of arguing in the comments, I measured it.
+### s1_tick_rate
+<|speaker:0|> A quick definition first. The server runs the real version of the match. It moves the simulation forward in fixed slices, and each slice is a tick. Between ticks, nothing new gets decided.
+<|speaker:0|> But "tick rate" gets used for several different things: how often the server simulates, how often it sends you updates, how often you send it your inputs, and how often a replay records positions. Those don't have to be the same number.
+<|speaker:6|> Gaijin has given out two numbers. Server replays store positions ten to fifteen times a second, which is where "ten tick" comes from.
+<|speaker:6|> And in twenty seventeen their CEO, Anton Yudintsev, wrote it plainly: "Tickrate is forty-eight hertz." No mention of game modes. Just forty-eight.
+<|speaker:2|> [dry] So which is it? Ten, or forty-eight? [short pause] We measured it. It's neither, at least not in tanks.
+### s2_method
+<|speaker:0|> My friend Salty and I set up two PCs in a private custom battle. Just the two of us, parked fifty to a hundred metres apart, with the in-game sound travel delay turned off.
+<|speaker:0|> One of us fires. Both PCs record exactly what they play through the speakers and log the moment the fire button goes down. The two clocks are synced over the local network to well under a millisecond.
+<|speaker:0|> We timed it with sound instead of video, because a gunshot is a sharp spike in the audio, and we can time it to about zero point three milliseconds. At a hundred and twenty F P S, video only gives you one frame every eight.
+<|speaker:0|> Then we fired a few hundred single shots at random moments. Random matters: a steady rhythm could line up with the tick and hide it.
+<|speaker:0|> If the game only acts on ticks, a shot fired just after a tick has to wait almost a full tick, and one fired just before barely waits at all. Plot the delay against where in the cycle you pressed, and you get a sawtooth. The width of the sawtooth is the tick.
+### s3_ground
+<|speaker:5|> [with quiet satisfaction] In tanks, the sawtooth is there, and it's clean. Your shot waits for the next tick, and ticks come <emphasis>twenty-four</emphasis> times a second, one every forty-one point seven milliseconds. Same result on both PCs, in all three sessions.
+<|speaker:2|> [dry] Not forty-eight. Exactly half.
+<|speaker:0|> We first ran at a hundred and twenty F P S, and a hundred and twenty divided by five happens to be twenty-four. So to rule out the game simply acting on every fifth frame, we repeated the test at sixty F P S. Still exactly twenty-four. It's a real game tick, and your frame rate doesn't change it.
+<|speaker:0|> The network traffic agrees: in ground battles, the server's updates arrive on the same rhythm, twenty-four times a second.
+<|speaker:6|> As for ten hertz: if shots had to wait for a ten hertz tick, the timing would be spread out far more than what we measured. Ground battles are not ten tick.
+<|speaker:5|> One more number, because it surprised me. From clicking to hearing your <emphasis>own</emphasis> gun takes about a hundred and fifty milliseconds, with no network involved at all. Most of that is a fixed delay inside the game. The rest is the tick and the game's sound engine.
+<|speaker:0|> On the other player's PC, the same shot is heard after about three hundred and fifteen milliseconds, so the network path adds roughly a hundred and sixty. Our ping was sixty to seventy. The remaining hundred milliseconds is about two ticks: the game holds other players' events back on purpose, to smooth out network jitter.
+### s4_air
+<|speaker:2|> [dry] So where's Anton's forty-eight? We repeated the test in planes, and there it is.
+<|speaker:0|> In air battles the network runs at forty-eight updates a second. In ground battles, twenty-four.
+<|speaker:6|> [pointed] Same game, same servers, and the mode most of you play gets half the rate Gaijin quotes.
+<|speaker:0|> And in planes, your own gunshot doesn't wait for a tick. The sound plays almost as soon as you click.
+<|speaker:4|> [thoughtful] That explains a lot. The gunshot you hear is your own PC reacting to <emphasis>you</emphasis>. It doesn't confirm that the server, or the other player, ever got the shot.
+<|speaker:5|> While recording, I noticed something else. Some of Salty's shots never showed up on my PC at all. On his side, a gunshot. On mine, nothing.
+<|speaker:0|> About one in five of his taps never played on my side, and it depends on how long the trigger was held. Under fifty milliseconds, only half show up. Above seventy, about ninety percent. In tanks it was ninety-four.
+<|speaker:0|> It isn't "every second shot" either. If it were, misses would alternate with hits, and they don't. Short taps simply get dropped on the way to the other player.
+### s5_ghost_shells
+<|speaker:0|> So how do these numbers turn into ghost shells? A tank at eighty kilometres an hour moves less than a metre per tick, so the tick itself isn't the problem. A jet at two thousand kilometres an hour moves almost twelve metres per forty-eight hertz step.
+<|speaker:2|> [dry] That's most of a jet.
+<|speaker:0|> The bigger factor is delay. Other players' actions reach your screen a hundred and sixty to a hundred and seventy milliseconds after they happen. Gaijin's own explanation is that the game covers that gap by guessing where everyone is right now.
+<|speaker:0|> When a target drives in a straight line, the guess is spot on. When it brakes, turns or stops, your screen shows the guess, and the server uses the real position.
+<|speaker:6|> [firm] You aim at the guess; the server checks against reality. When those two disagree, you get a ghost shell.
+<|speaker:2|> [dry, pointed] And clip five, where the shell passes through even in the server replay? That's Gaijin's own recording showing it. [short pause] Explain that one, Gaijin.
+### s6_scoreboard
+<|speaker:6|> [firm, measured] Here's the scoreboard. The community says ten: wrong. Gaijin says forty-eight: true in the air, and only in the air.
+<|speaker:0|> Tanks run at twenty-four, and in all the years "tickrate is forty-eight hertz" has been quoted at players, I couldn't find Gaijin saying that anywhere.
+<|speaker:6|> [serious] Quoting the air number and staying quiet about ground is misleading, whatever the reason behind it.
+<|speaker:0|> And on top of the tick, a big part of the delay you feel is built into the game before the network even starts: a hundred and fifty milliseconds from click to your own gunshot.
+### s7_outro
+<|speaker:0|> [warm] The whole experiment is on GitHub: the recording tools, the analysis scripts, the raw data and the full write-up. All you need is two PCs, two accounts and a patient friend.
+<|speaker:4|> [sincere] If your numbers come out different, I genuinely want to see them. That's how this kind of thing should work.
+<|speaker:5|> [hushed, intriguing] And the tick rate isn't the only thing War Thunder keeps quiet about. There are a few more skeletons in that closet.
+<|speaker:5|> What do naval battles run at? What happens to a forty-eight hertz plane when it joins a twenty-four hertz ground battle, and who's right when an A A tank shoots at it? And when does a hit actually count on the server, compared with when you see and hear it?
+<|speaker:1|> [upbeat] If enough of you want it, that's part two. Let me know in the comments.
+<|speaker:2|> [warm, amused] Thanks to Salty for getting shot several hundred times in the name of science. See you in the next one.

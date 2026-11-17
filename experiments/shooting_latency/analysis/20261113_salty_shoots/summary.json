@@ -1,0 +1,115 @@
+{
+  "presses_total": 510,
+  "presses_isolated": 507,
+  "matched_remote": 467,
+  "observer_video_sync": {
+    "mode": "audio",
+    "onsets": 1892,
+    "mixer_block_ms": 5.3333
+  },
+  "shooter_clock": null,
+  "observer_clock": {
+    "windows": 208,
+    "offset_ms_median": -886.4583,
+    "offset_ms_range": 20.5759,
+    "rtt_ms_p5": 0.3134
+  },
+  "remote_delay_ms": {
+    "p5": 275.08,
+    "p25": 311.17,
+    "p50": 328.79,
+    "p75": 344.61,
+    "p95": 366.04
+  },
+  "remote_fit": {
+    "K1": {
+      "c_ms": 284.15,
+      "T_ms": 75.0,
+      "sigma_ms": 8.0,
+      "K": 1,
+      "LL": -2279.02
+    },
+    "K2": {
+      "c_ms": 267.55,
+      "T_ms": 54.0,
+      "sigma_ms": 8.0,
+      "K": 2,
+      "LL": -2261.32
+    },
+    "best_K": 2,
+    "T_ms": 54.0,
+    "T_ms_CI95": [
+      48.74,
+      68.5
+    ],
+    "implied_Hz": 18.52,
+    "n": 467
+  },
+  "remote_onset_rayleigh_peaks_hz": [
+    {
+      "hz": 93.75,
+      "Z": 31.0,
+      "frame_artifact": true
+    },
+    {
+      "hz": 6.23,
+      "Z": 12.6,
+      "frame_artifact": false
+    },
+    {
+      "hz": 87.86,
+      "Z": 11.1,
+      "frame_artifact": false
+    },
+    {
+      "hz": 84.2,
+      "Z": 9.5,
+      "frame_artifact": false
+    },
+    {
+      "hz": 51.86,
+      "Z": 9.1,
+      "frame_artifact": false
+    }
+  ],
+  "packets_observer": {
+    "flow": "130.193.36.201:20026",
+    "up_pps": 49.09,
+    "down_pps": 30.99,
+    "last_downstream_to_onset_ms": {
+      "p5": 1.95,
+      "p50": 19.48,
+      "p95": 37.9
+    },
+    "downstream_rayleigh_peaks_hz": [
+      [
+        24.33,
+        599.5
+      ],
+      [
+        98.86,
+        182.0
+      ],
+      [
+        74.53,
+        161.1
+      ],
+      [
+        48.58,
+        125.0
+      ],
+      [
+        99.58,
+        95.7
+      ]
+    ]
+  },
+  "verdict": {
+    "fold_period_ms": 160.51,
+    "fold_Z": 12.6,
+    "fit_period_ms": 54.0,
+    "period_ms": 54.0,
+    "status": "FIT-ONLY: no strong phase-locked peak (tick may not be phase-stable, or too few presses)",
+    "implied_Hz": 18.52
+  }
+}

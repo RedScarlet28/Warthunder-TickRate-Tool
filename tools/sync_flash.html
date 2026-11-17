@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sync Flash</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#000; --fg:#fff; --dim:#444; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family:Consolas,monospace; overflow:hidden; }
+  #flash { position:absolute; left:0; top:0; width:40vmin; height:40vmin; background:var(--bg); }
+  #clock { position:absolute; left:44vmin; top:2vmin; font-size:7vmin; }
+  #info  { position:absolute; left:44vmin; top:12vmin; font-size:2.2vmin; color:#aaa; line-height:1.5; max-width:52vw; }
+  #bits  { position:absolute; left:0; bottom:0; width:100%; height:10vmin; display:flex; }
+  #bits div { flex:1; border-right:2px solid var(--dim); }
+  #tick  { position:absolute; left:0; top:41vmin; width:40vmin; height:3vmin; display:flex; }
+  #tick div { flex:1; }
+</style>
+</head>
+<body>
+<div id="flash"></div>
+<div id="clock">--:--:--.---</div>
+<div id="info">
+  The big square flashes white for the first 100 ms of every UTC second.<br>
+  The bottom bar shows (UTC seconds mod 4096) in binary, most significant bit on the left, so any single camera frame can be decoded to an absolute second.<br>
+  The strip under the square cycles through 10 cells, each 100 ms, to read sub-second phase.<br>
+  Sync the PCs with NTP first. Film both screens at the same time; any frame offset between their flashes is the residual clock error.
+</div>
+<div id="tick"></div>
+<div id="bits"></div>
+<script>
+  const flash = document.getElementById('flash'), clock = document.getElementById('clock');
+  const bits = document.getElementById('bits'), tick = document.getElementById('tick');
+  const NB = 12, bitEls = [], tickEls = [];
+  for (let i = 0; i < NB; i++) { const d = document.createElement('div'); bits.appendChild(d); bitEls.push(d); }
+  for (let i = 0; i < 10; i++) { const d = document.createElement('div'); tick.appendChild(d); tickEls.push(d); }
+  const pad = (n, w) => String(n).padStart(w, '0');
+  function frame() {
+    const now = Date.now(), ms = now % 1000, s = Math.floor(now / 1000);
+    flash.style.background = ms < 100 ? '#fff' : '#000';
+    const d = new Date(now);
+    clock.textContent = `${pad(d.getUTCHours(),2)}:${pad(d.getUTCMinutes(),2)}:${pad(d.getUTCSeconds(),2)}.${pad(ms,3)} UTC`;
+    const v = s % 4096;
+    for (let i = 0; i < NB; i++) bitEls[i].style.background = (v >> (NB - 1 - i)) & 1 ? '#fff' : '#111';
+    const c = Math.floor(ms / 100);
+    for (let i = 0; i < 10; i++) tickEls[i].style.background = i === c ? '#0f0' : '#111';
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

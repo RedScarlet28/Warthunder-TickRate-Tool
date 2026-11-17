@@ -1,0 +1,54 @@
+[
+ {
+  "label": "Salty own shot",
+  "n": 129,
+  "delay_pct_5_25_50_75_95": [
+   130.6,
+   142.1,
+   151.8,
+   165.5,
+   182.0
+  ],
+  "IQR_raw_ms": 23.4,
+  "best_wait_freq_hz": 24.0,
+  "IQR_after_removing_best_wait": 15.7,
+  "IQR_after_removing_24Hz_wait": 15.7,
+  "onset_Z": {
+   "10": 0.8,
+   "15": 1.0,
+   "20": 2.4,
+   "24": 14.8,
+   "30": 0.8,
+   "46.875": 0.5,
+   "48": 0.5,
+   "60": 1.0
+  },
+  "press_Z_at_24": 0.6
+ },
+ {
+  "label": "Salty -> heard on me",
+  "n": 165,
+  "delay_pct_5_25_50_75_95": [
+   286.4,
+   308.8,
+   326.0,
+   343.0,
+   375.6
+  ],
+  "IQR_raw_ms": 34.3,
+  "best_wait_freq_hz": 19.75,
+  "IQR_after_removing_best_wait": 29.2,
+  "IQR_after_removing_24Hz_wait": 34.1,
+  "onset_Z": {
+   "10": 0.2,
+   "15": 0.5,
+   "20": 2.8,
+   "24": 2.4,
+   "30": 0.8,
+   "46.875": 54.1,
+   "48": 0.5,
+   "60": 0.6
+  },
+  "press_Z_at_24": 1.6
+ }
+]

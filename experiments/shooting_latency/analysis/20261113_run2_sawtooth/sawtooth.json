@@ -1,0 +1,54 @@
+[
+ {
+  "label": "own shot (same PC)",
+  "n": 166,
+  "delay_pct_5_25_50_75_95": [
+   123.6,
+   136.5,
+   148.1,
+   158.4,
+   171.2
+  ],
+  "IQR_raw_ms": 21.9,
+  "best_wait_freq_hz": 24.0,
+  "IQR_after_removing_best_wait": 12.2,
+  "IQR_after_removing_24Hz_wait": 12.2,
+  "onset_Z": {
+   "10": 0.1,
+   "15": 1.2,
+   "20": 2.0,
+   "24": 40.5,
+   "30": 0.1,
+   "46.875": 87.6,
+   "48": 0.4,
+   "60": 0.6
+  },
+  "press_Z_at_24": 0.2
+ },
+ {
+  "label": "remote shot (via server)",
+  "n": 200,
+  "delay_pct_5_25_50_75_95": [
+   267.0,
+   317.1,
+   332.3,
+   346.8,
+   366.4
+  ],
+  "IQR_raw_ms": 29.7,
+  "best_wait_freq_hz": 24.0,
+  "IQR_after_removing_best_wait": 24.8,
+  "IQR_after_removing_24Hz_wait": 24.8,
+  "onset_Z": {
+   "10": 0.1,
+   "15": 0.9,
+   "20": 0.6,
+   "24": 0.6,
+   "30": 0.1,
+   "46.875": 8.8,
+   "48": 2.2,
+   "60": 0.2
+  },
+  "press_Z_at_24": 0.1
+ }
+]

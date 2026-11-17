@@ -1,0 +1,518 @@
+<title>Life at 24 Hz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column on a cool range-card ground; instrument panels (canvas + controls) break slightly wider. */
+:root {
+  --bg: #edf0f3;
+  --panel: #f9fafb;
+  --ink: #16202b;
+  --muted: #566370;
+  --line: #c8d0d8;
+  --grid: #dfe4ea;
+  --steel: #2f5f8f;     /* the target, true position */
+  --tracer: #b85a00;    /* ticks, shots */
+  --late: #8240b8;      /* what reaches the other PC late */
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f151c; --panel: #16202a; --ink: #e4eaf0; --muted: #93a2b0; --line: #2c3947; --grid: #1e2833;
+    --steel: #86b2de; --tracer: #ffa64d; --late: #c69cf0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f151c; --panel: #16202a; --ink: #e4eaf0; --muted: #93a2b0; --line: #2c3947; --grid: #1e2833;
+  --steel: #86b2de; --tracer: #ffa64d; --late: #c69cf0; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; letter-spacing: 0.01em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(2.4rem, 6vw, 4rem); }
+h2 { font-size: clamp(1.7rem, 3.6vw, 2.3rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0; max-width: 66ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.12rem; color: var(--muted); }
+section { display: grid; gap: 18px; }
+.hero { display: grid; gap: 18px; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 8px; }
+.stat { background: var(--panel); padding: 16px 18px; display: grid; gap: 2px; align-content: start; }
+.stat b { font-family: var(--f-display); font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1; font-weight: 700; }
+.stat span { color: var(--muted); font-size: 0.92rem; }
+.stat.t b { color: var(--tracer); }
+.stat.j b, .stat.k b { color: var(--steel); }
+@media (max-width: 640px) { .stats { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--panel); border: 1px solid var(--line); display: grid; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 22px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+.group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.group > .eyebrow { margin-right: 2px; }
+.seg { display: inline-flex; border: 1px solid var(--line); }
+.seg button { font: 500 0.88rem var(--f-body); color: var(--ink); background: transparent; border: 0; padding: 6px 11px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.seg button:disabled { color: var(--line); cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--tracer); outline-offset: 2px; }
+.btn { font: 600 0.9rem var(--f-body); border: 1px solid var(--tracer); color: var(--tracer); background: transparent; padding: 6px 14px; cursor: pointer; }
+.btn.fire { background: var(--tracer); color: var(--panel); }
+.btn kbd { font-family: var(--f-mono); font-size: 0.75rem; opacity: 0.8; margin-left: 4px; }
+select { font: 0.88rem var(--f-body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); padding: 5px 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 10px 16px; border-top: 1px solid var(--line); font-size: 0.88rem; }
+.legend label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.sw { width: 22px; height: 10px; display: inline-block; }
+.sw.true { background: var(--steel); }
+.sw.tick { border: 2px dashed var(--tracer); }
+.sw.late { background: var(--late); opacity: 0.55; }
+.sw.mark { background: linear-gradient(90deg, transparent 45%, var(--tracer) 45% 55%, transparent 55%); }
+canvas { display: block; width: 100%; max-width: 100%; }
+.readout { padding: 12px 16px; border-top: 1px solid var(--line); font-size: 0.95rem; min-height: 3.2em; }
+.readout b { font-family: var(--f-mono); font-weight: 500; }
+input[type="range"] { width: min(320px, 60vw); accent-color: var(--tracer); }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.93rem; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--f-mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+th.n { text-align: right; }
+.bar { height: 8px; background: var(--steel); display: block; min-width: 2px; }
+.bar.tank { opacity: 0.55; }
+.barcell { width: 26%; }
+.barcell div { display: grid; gap: 3px; }
+.tag { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 1px 6px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.tag.m { border-color: var(--steel); color: var(--steel); }
+.tag.e { border-color: var(--late); color: var(--late); }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 720px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; display: grid; gap: 8px; align-content: start; }
+.card p { font-size: 0.95rem; }
+ul.points { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 70ch; }
+.note { font-size: 0.88rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<main class="wrap">
+  <header class="hero">
+    <div class="eyebrow">War Thunder netcode experiment · 4 runs · 13 Nov 2026</div>
+    <h1>Tanks tick 24 times a second. Jets tick 48.</h1>
+    <p class="lede">Our recordings found a fixed 24 Hz tick for ground vehicles (the same at 60 and 120 FPS) and a 48 Hz network rate in air battles. Below is what one step means for a jet at 2000 km/h and a tank at 80 km/h, crossing your view or climbing and diving.</p>
+    <div class="stats">
+      <div class="stat t"><b class="num">41.7 / 20.8 ms</b><span>one step: tanks 24 Hz, jets 48 Hz (measured)</span></div>
+      <div class="stat j"><b class="num">11.6 m</b><span>a jet at 2000 km/h travels per 48 Hz step, about ¾ of its own length</span></div>
+      <div class="stat k"><b class="num">0.93 m</b><span>a tank at 80 km/h travels per 24 Hz tick, about 1/8 of its length</span></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="s-scene">
+    <h2 id="s-scene">Watch it in slow motion</h2>
+    <p>Side view, to scale. The solid shape is where the target really is. Amber marks show where it is each time the game ticks. Press <b>Fire</b>: the game holds your shot until the next tick, and the bracket shows how far the target moved while you waited.</p>
+    <div class="panel">
+      <div class="controls">
+        <div class="group"><span class="eyebrow">Target</span>
+          <div class="seg" id="tgt">
+            <button type="button" id="tgt-jet" data-v="jet" aria-pressed="true">Jet · 2000 km/h</button>
+            <button type="button" id="tgt-tank" data-v="tank" aria-pressed="false">Tank · 80 km/h</button>
+          </div>
+        </div>
+        <div class="group"><span class="eyebrow">Direction</span>
+          <div class="seg" id="dir">
+            <button type="button" id="dir-right" data-v="right" aria-pressed="true" title="Left to right">→</button>
+            <button type="button" id="dir-left" data-v="left" aria-pressed="false" title="Right to left">←</button>
+            <button type="button" id="dir-up" data-v="up" aria-pressed="false" title="Climbing">↑ climb</button>
+            <button type="button" id="dir-down" data-v="down" aria-pressed="false" title="Diving">↓ dive</button>
+          </div>
+        </div>
+        <div class="group"><label class="eyebrow" for="slow">Speed</label>
+          <select id="slow">
+            <option value="1">Real time</option>
+            <option value="5">1/5</option>
+            <option value="20" selected>1/20</option>
+            <option value="60">1/60</option>
+          </select>
+        </div>
+        <div class="group">
+          <button type="button" class="btn fire" id="fire">Fire<kbd>F</kbd></button>
+          <button type="button" class="btn" id="pause">Pause</button>
+        </div>
+      </div>
+      <canvas id="scene" aria-label="Animated side view of the target moving with tick markers"></canvas>
+      <div class="legend">
+        <span><span class="sw true"></span> True position</span>
+        <label><input type="checkbox" id="show-ticks" checked> <span class="sw mark"></span> Where it is at each tick</label>
+        <label><input type="checkbox" id="show-latest" checked> <span class="sw tick"></span> Newest tick so far</label>
+        <label><input type="checkbox" id="show-late" checked> <span class="sw late"></span> If drawn as late as gunshots (≈160–170 ms)</label>
+      </div>
+      <div class="readout" id="readout" aria-live="polite"></div>
+    </div>
+    <p class="note">Your monitor still draws 60 or 120 smooth frames a second, so you never see the jumps. The tick shows up in timing: when your shot actually leaves, and how fresh the other player's information is.</p>
+  </section>
+
+  <section aria-labelledby="s-sight">
+    <h2 id="s-sight">Through the gunsight</h2>
+    <p>The same step as an angle, at the range you choose. The dashed outlines are where the target will be after 1, 2 and 3 ticks. A click at a random moment fires anywhere from 0 to 1 tick late.</p>
+    <div class="panel">
+      <div class="controls">
+        <div class="group"><label class="eyebrow" for="range">Range</label>
+          <input type="range" id="range" min="200" max="3000" step="50" value="1000">
+          <span class="num" id="range-out">1000 m</span>
+        </div>
+        <div class="group"><span class="eyebrow">Target</span><span id="sight-tgt">Jet · 2000 km/h, crossing</span></div>
+      </div>
+      <canvas id="sight" aria-label="Gunsight view with mil scale and tick-step ghosts"></canvas>
+      <div class="readout" id="sight-out"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-table">
+    <h2 id="s-table">How far it gets during each delay</h2>
+    <p>Every delay we measured, turned into distance. Bars are in body lengths (jet 16 m, tank 7 m), so the two compare directly.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Delay</th><th class="n">ms (jet / tank)</th><th class="n">Jet</th><th class="n">Tank</th><th>Body lengths (jet / tank)</th><th>Source</th></tr></thead>
+        <tbody id="dist"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-turn">
+    <h2 id="s-turn">When the target changes course</h2>
+    <p>The other player's actions reach your screen about <b>160 ms</b> (tanks) to <b>170 ms</b> (jets) later than they reach theirs (measured: their gunshot heard on your PC minus their own). How that shows up depends on how the game draws them.</p>
+    <div class="two">
+      <div class="card">
+        <h3>Drawing the past</h3>
+        <p>If the game drew positions the same way it plays gunshots, a 2000 km/h jet would always appear <b class="num">94 m</b> behind where it really is, and a tank <b class="num">3.6 m</b> behind. The path would be correct, just late.</p>
+      </div>
+      <div class="card">
+        <h3>Guessing the present</h3>
+        <p>Gaijin says War Thunder extrapolates: it predicts where the target is now. In straight flight that's spot on. When the target turns or brakes, the guess is wrong until the news arrives, then it corrects.</p>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Manoeuvre</th><th class="n">after one step (jet 21 ms, tank 42 ms)</th><th class="n">after 100 ms</th><th class="n">after the remote delay (jet 170 ms, tank 160 ms)</th></tr></thead>
+        <tbody id="turn"></tbody>
+      </table>
+    </div>
+    <p class="note">Error of a straight-line guess = ½ · acceleration · time². The time is how long ago the newest information about the target was true.</p>
+  </section>
+
+  <section aria-labelledby="s-mean">
+    <h2 id="s-mean">What this means in a fight</h2>
+    <ul class="points">
+      <li><b>In a tank, your trigger has a 0–42 ms random delay</b> (measured). At 80 km/h that's under a metre of target travel and barely matters. In planes we saw no such wait in the gunshot sound; if bullets still start on Anton's 48 Hz grid, that's 0–11.6 m on a 2000 km/h crossing jet.</li>
+      <li><b>Direction doesn't change the distance.</b> Left, right, climbing or diving, the jet covers 11.6 m per 48 Hz step. What matters is how much of that motion is across your line of sight: a head-on or tail-chase target barely moves on screen.</li>
+      <li><b>Range turns metres into angle.</b> At 500 m one jet step is 23 mils (1.3°); at 2000 m it's 6 mils. Close-range deflection shots on fast jets suffer most.</li>
+      <li><b>Hard turns show up late.</b> A 9 g break starts on your screen roughly 170 ms after it began. A straight-line guess is about 1.3 m off by then, and the corrected position catches up over the following frames.</li>
+      <li><b>Tanks are barely affected by the tick itself.</b> At 80 km/h one tick is 0.93 m. The ~150 ms between your click and your own gun firing (3.3 m) matters more than the tick does.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="s-src">
+    <h2 id="s-src">What's measured and what's estimated</h2>
+    <ul class="points">
+      <li><span class="tag m">measured</span> The 24 Hz ground tick: your shot waits for the next tick. Seen on both PCs at 120 and 60 FPS; every blind frequency scan picked 24.000 Hz.</li>
+      <li><span class="tag m">measured</span> Click → own gunshot ≈ 150 ms (148 ms at 120 FPS, 153 ms at 60 FPS). Click → heard on the other PC 305–332 ms, median used here 315 ms.</li>
+      <li><span class="tag m">measured</span> Server sends updates about 24.3 times a second in ground battles (two servers) and on a ≈ 49 Hz grid in air battles (one server, one run).</li>
+      <li><span class="tag m">measured</span> In the air run, about 1 in 4 short taps never played on the other PC (49 % heard for taps under 50 ms).</li>
+      <li><span class="tag e">estimated</span> The split of the extra ~160 ms into ping (60–70 ms) and a buffer of about 2 ticks. This comes from medians plus the in-game ping, not a direct measurement.</li>
+      <li><span class="tag e">estimated</span> How positions are drawn. We measured gunshot sounds, not positions. Gaijin's own statement is that positions are extrapolated.</li>
+      <li><span class="tag e">assumed</span> Body lengths: jet 16 m, tank 7 m. Manoeuvres: 9 g and 5 g turns, a 0.6 g hard brake.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+(() => {
+  // measured: ground shots wait for a 24 Hz tick; air battles run their network at 48 Hz
+  // remote minus own delay (measured medians): ground 160 ms, air 170 ms
+  const TARGETS = {
+    jet:  { label: "Jet · 2000 km/h", tick: 1 / 48, late: 0.170, kmh: 2000, len: 16, view: 240, grid: 10, gridLabel: 50, draw: shapeJet,  dirs: ["right", "left", "up", "down"] },
+    tank: { label: "Tank · 80 km/h",  tick: 1 / 24, late: 0.160, kmh: 80,   len: 7,  view: 16,  grid: 1,  gridLabel: 2,  draw: shapeTank, dirs: ["right", "left"] },
+  };
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const S = { target: "jet", dir: "right", slow: 20, paused: reduce, t: 0, shot: null,
+              show: { ticks: true, latest: true, late: true } };
+
+  const $ = (id) => document.getElementById(id);
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt = (x, d = 1) => x.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+
+  const tick = () => TARGETS[S.target].tick;
+  function geom() {
+    const T = TARGETS[S.target], v = T.kmh / 3.6, step = v * T.tick;
+    const L = Math.ceil((T.view + 2 * T.len) / step) * step;   // wrap length, a whole number of ticks
+    return { T, v, step, L };
+  }
+  const axisPos = (t, g) => (((g.v * t) % g.L) + g.L) % g.L - g.T.len;
+
+  // ---------- shapes (unit length, nose toward +x, ground/belly at y≈0) ----------
+  function shapeJet(c) {
+    c.beginPath();
+    c.moveTo(0.5, 0); c.lineTo(0.32, -0.045); c.lineTo(0.2, -0.05); c.lineTo(0.12, -0.085);
+    c.lineTo(0.0, -0.085); c.lineTo(-0.08, -0.055); c.lineTo(-0.34, -0.05); c.lineTo(-0.45, -0.21);
+    c.lineTo(-0.52, -0.21); c.lineTo(-0.5, -0.04); c.lineTo(-0.5, 0.03); c.lineTo(0.3, 0.035); c.closePath();
+    c.moveTo(0.06, 0.01); c.lineTo(-0.2, 0.09); c.lineTo(-0.29, 0.09); c.lineTo(-0.16, 0.01); c.closePath();
+  }
+  function shapeTank(c) {
+    c.beginPath();
+    c.moveTo(-0.5, -0.06); c.lineTo(-0.44, 0.02); c.lineTo(0.42, 0.02); c.lineTo(0.5, -0.08);
+    c.lineTo(0.46, -0.19); c.lineTo(-0.5, -0.19); c.closePath();
+    c.moveTo(-0.22, -0.19); c.lineTo(-0.2, -0.32); c.lineTo(0.12, -0.32); c.lineTo(0.17, -0.19); c.closePath();
+    c.moveTo(0.15, -0.27); c.lineTo(0.78, -0.27); c.lineTo(0.78, -0.245); c.lineTo(0.15, -0.245); c.closePath();
+  }
+  function drawShape(c, T, px, py, sizePx, dir, style) {
+    c.save(); c.translate(px, py);
+    if (dir === "left") c.scale(-1, 1);
+    if (dir === "up") c.rotate(-Math.PI / 2);
+    if (dir === "down") c.rotate(Math.PI / 2);
+    c.scale(sizePx, sizePx);
+    T.draw(c);
+    if (style.fill) { c.globalAlpha = style.alpha ?? 1; c.fillStyle = style.fill; c.fill("evenodd"); c.globalAlpha = 1; }
+    if (style.stroke) { c.lineWidth = 2 / sizePx; c.setLineDash(style.dash ? [5 / sizePx, 4 / sizePx] : []); c.strokeStyle = style.stroke; c.stroke(); }
+    c.restore();
+  }
+
+  // ---------- canvas sizing ----------
+  function fit(cv, aspect, maxH) {
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth;
+    const h = Math.min(maxH, Math.round(w / aspect));
+    cv.style.height = h + "px";
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { c, W: w, H: h };
+  }
+
+  // ---------- scene ----------
+  const scene = $("scene");
+  function drawScene() {
+    const vertical = S.dir === "up" || S.dir === "down";
+    const { c, W, H } = fit(scene, vertical ? 1.25 : 2.4, vertical ? 560 : 440);
+    const g = geom(), T = g.T, pad = 34;
+    const axisPx = (vertical ? H : W) - 2 * pad, scale = axisPx / T.view;
+    const mid = vertical ? W * 0.42 : H * 0.48;
+    const P = (x) => S.dir === "right" ? [pad + x * scale, mid] : S.dir === "left" ? [W - pad - x * scale, mid]
+                  : S.dir === "up" ? [mid, H - pad - x * scale] : [mid, pad + x * scale];
+    const perp = (pt, d) => vertical ? [pt[0] + d, pt[1]] : [pt[0], pt[1] + d];
+    const ink = css("--ink"), muted = css("--muted"), gridc = css("--grid"), line = css("--line"),
+          steel = css("--steel"), tracer = css("--tracer"), late = css("--late");
+    c.fillStyle = css("--panel"); c.fillRect(0, 0, W, H);
+    c.font = "11px " + css("--f-mono"); c.textBaseline = "middle";
+
+    // distance grid perpendicular to motion
+    for (let m = 0; m <= T.view + 1e-6; m += T.grid) {
+      const major = Math.abs(m / T.gridLabel - Math.round(m / T.gridLabel)) < 1e-6;
+      const p = P(m);
+      c.strokeStyle = major ? line : gridc; c.lineWidth = 1; c.setLineDash([]);
+      c.beginPath();
+      if (vertical) { c.moveTo(0, p[1]); c.lineTo(W, p[1]); } else { c.moveTo(p[0], 0); c.lineTo(p[0], H); }
+      c.stroke();
+      if (major) {
+        c.fillStyle = muted; c.textAlign = vertical ? "left" : "center";
+        if (vertical) c.fillText(m + " m", 6, p[1] - 8); else c.fillText(m + " m", p[0], H - 12);
+      }
+    }
+    // path
+    c.strokeStyle = muted; c.setLineDash([2, 5]); c.beginPath();
+    const a = P(0), b = P(T.view); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); c.setLineDash([]);
+
+    const sizePx = T.len * scale;
+    const off = Math.max(18, sizePx * 0.35) + 10;   // bracket offset from the path
+    // tick markers
+    if (S.show.ticks) {
+      c.strokeStyle = tracer; c.lineWidth = 2;
+      for (let j = 0; j * g.step - T.len <= T.view; j++) {
+        const x = j * g.step - T.len; if (x < 0) continue;
+        const p = P(x), q1 = perp(p, -off * 0.7), q2 = perp(p, -off * 0.7 - 9);
+        c.beginPath(); c.moveTo(q1[0], q1[1]); c.lineTo(q2[0], q2[1]); c.stroke();
+      }
+    }
+    const xt = axisPos(S.t, g);
+    const xk = axisPos(Math.floor(S.t / tick() + 1e-9) * tick(), g);
+    const xl = axisPos(S.t - T.late, g);
+    if (S.show.late && xl <= xt) drawShape(c, T, ...P(xl), sizePx, S.dir, { fill: late, alpha: 0.4 });
+    if (S.show.latest) drawShape(c, T, ...P(xk), sizePx, S.dir, { stroke: tracer, dash: true });
+    drawShape(c, T, ...P(xt), sizePx, S.dir, { fill: steel });
+
+    function bracket(x1, x2, d, color, text) {
+      if (x2 < x1 || x1 < -T.len * 0.5 || x2 > T.view + T.len * 0.5) return;
+      const p1 = perp(P(x1), d), p2 = perp(P(x2), d), e = d > 0 ? -5 : 5;
+      c.strokeStyle = color; c.fillStyle = color; c.lineWidth = 1.5;
+      c.beginPath();
+      const e1 = perp(p1, e), e2 = perp(p2, e);
+      c.moveTo(e1[0], e1[1]); c.lineTo(p1[0], p1[1]); c.lineTo(p2[0], p2[1]); c.lineTo(e2[0], e2[1]); c.stroke();
+      const m = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2], tp = perp(m, d > 0 ? 12 : -12);
+      c.textAlign = vertical ? "left" : "center";
+      c.fillText(text, vertical ? tp[0] + (d > 0 ? 0 : -2) : tp[0], tp[1]);
+    }
+    if (S.show.late) bracket(xl, xt, off + 22, late, fmt(xt - xl) + " m · " + Math.round(T.late * 1000) + " ms");
+    if (S.show.latest && xt - xk > 0.02 * T.len) bracket(xk, xt, off, tracer, fmt(xt - xk) + " m since last tick");
+
+    // shot
+    if (S.shot) {
+      const sh = S.shot, xp = axisPos(sh.tp, g), xr = axisPos(sh.tr, g), fired = S.t >= sh.tr;
+      const mark = (x, label, col, extra) => {
+        const p = P(x), q1 = perp(p, -off - 4), q2 = perp(p, -off - 26 - extra);
+        c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(q1[0], q1[1]); c.lineTo(q2[0], q2[1]); c.stroke();
+        const lt = perp(p, -off - 36 - extra); c.textAlign = vertical ? "right" : "center";
+        c.fillText(label, vertical ? lt[0] + 4 : lt[0], lt[1]);
+      };
+      if (xp <= xt + 1e-6 && xp > -T.len) {
+        mark(xp, "click", ink, 0);
+        if (fired && xr >= xp) { mark(xr, "shot leaves", tracer, vertical ? 0 : 16); bracket(xp, xr, -off - 14, tracer, fmt(xr - xp) + " m"); }
+      }
+    }
+    // scale label
+    c.fillStyle = muted; c.textAlign = "right";
+    c.fillText(T.label + (S.slow > 1 ? "  ·  1/" + S.slow + " speed" : "  ·  real time"), W - 8, 12);
+  }
+
+  function readout() {
+    const g = geom(), T = g.T, r = $("readout");
+    if (!S.shot) { r.innerHTML = `One step = <b>${fmt(g.step, 2)} m</b> for the ${T.label.toLowerCase()} (${fmt(g.step / T.len, 2)} of its length). Press Fire.`; return; }
+    const wait = (S.shot.tr - S.shot.tp) * 1000;
+    const tag = S.shot.example ? "Example shot: " : "Your shot: ";
+    r.innerHTML = S.t < S.shot.tr ? "Waiting for the next tick…"
+      : `${tag}clicked, then waited <b>${fmt(wait)} ms</b> for the next step. The ${S.target === "jet" ? "jet" : "tank"} moved <b>${fmt(g.v * wait / 1000, 2)} m</b> meanwhile (range 0–${fmt(g.step, 2)} m).`;
+  }
+
+  function fire() {
+    const TK = tick(), tp = S.t, tr = Math.ceil(tp / TK - 1e-9) * TK;
+    S.shot = { tp, tr: tr <= tp ? tr + TK : tr };
+    readout();
+  }
+
+  function resetT() {
+    const g = geom();
+    S.t = (0.62 * g.T.view + g.T.len) / g.v;
+    const TK = tick(), k = Math.floor(S.t / TK);
+    S.shot = { tp: (k - 1 + 0.35) * TK, tr: k * TK, example: true };
+  }
+
+  let last = null, lastShotClear = 0;
+  function frame(now) {
+    if (last != null && !S.paused) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      S.t += dt / S.slow;
+      const g = geom();
+      if (S.shot && S.t - S.shot.tp > (g.L / g.v) * 0.85) { S.shot = null; }
+    }
+    last = now;
+    drawScene();
+    if (!S.paused || now - lastShotClear > 250) { readout(); lastShotClear = now; }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- gunsight ----------
+  const sight = $("sight");
+  function drawSight() {
+    const { c, W, H } = fit(sight, 2.6, 360);
+    const T = TARGETS[S.target], v = T.kmh / 3.6, R = +$("range").value;
+    const stepMil = v * T.tick / R * 1000, lenMil = T.len / R * 1000;
+    const content = 3 * stepMil + lenMil;
+    const fov = Math.max(content * 1.35, lenMil * 3.2, 8);
+    const ppm = W / fov, cx = W / 2, cy = H * 0.5;
+    const ink = css("--ink"), muted = css("--muted"), steel = css("--steel"), tracer = css("--tracer"), line = css("--line");
+    c.fillStyle = css("--panel"); c.fillRect(0, 0, W, H);
+    c.font = "11px " + css("--f-mono"); c.textBaseline = "middle"; c.textAlign = "center";
+    // mil scale
+    const nice = [0.5, 1, 2, 5, 10, 20, 50, 100].find(n => n >= fov / 26) || 100;
+    c.strokeStyle = ink; c.lineWidth = 1; c.setLineDash([]);
+    c.beginPath(); c.moveTo(0, cy); c.lineTo(W, cy); c.moveTo(cx, cy - H * 0.32); c.lineTo(cx, cy + H * 0.32); c.stroke();
+    for (let m = -Math.floor(fov / 2 / nice) * nice; m <= fov / 2; m += nice) {
+      const x = cx + m * ppm, major = Math.round(m / nice) % 2 === 0;
+      c.beginPath(); c.moveTo(x, cy + 2); c.lineTo(x, cy + (major ? 12 : 6)); c.stroke();
+      if (major && m !== 0) { c.fillStyle = muted; c.fillText(String(Math.abs(+m.toFixed(1))), x, cy + 22); }
+    }
+    c.fillStyle = muted; c.textAlign = "left"; c.fillText("mils", 8, cy + 22);
+    // target and ghosts
+    const x0 = cx - content / 2 * ppm + lenMil / 2 * ppm, ty = cy - H * 0.17, size = lenMil * ppm;
+    for (let k = 3; k >= 1; k--) {
+      const x = x0 + k * stepMil * ppm;
+      drawShape(c, T, x, ty, size, "right", { stroke: tracer, dash: true });
+      c.fillStyle = tracer; c.textAlign = "center"; c.fillText("+" + k + " tick" + (k > 1 ? "s" : ""), x, ty - Math.max(16, size * 0.3) - (k % 2 ? 0 : 13));
+    }
+    drawShape(c, T, x0, ty, size, "right", { fill: steel });
+    c.fillStyle = steel; c.textAlign = "center"; c.fillText("now", x0, ty + Math.max(14, size * 0.12) + 6);
+    // step bracket
+    const by = cy - H * 0.36, xa = x0, xb = x0 + stepMil * ppm;
+    c.strokeStyle = tracer; c.lineWidth = 1.5; c.beginPath();
+    c.moveTo(xa, by + 5); c.lineTo(xa, by); c.lineTo(xb, by); c.lineTo(xb, by + 5); c.stroke();
+    c.fillStyle = tracer; c.fillText(fmt(stepMil) + " mils per step", (xa + xb) / 2 + (xb - xa < 110 ? 70 : 0), by - 10);
+
+    $("range-out").textContent = R + " m";
+    $("sight-tgt").textContent = T.label + ", crossing";
+    const deg = stepMil * 0.05625;  // NATO mil = 360/6400 degrees
+    $("sight-out").innerHTML = `At <b>${R} m</b>, one step moves the ${S.target} <b>${fmt(stepMil)} mils</b> (${fmt(deg, 2)}°), `
+      + `<b>${fmt(stepMil / lenMil, 2)}×</b> its own length on screen. A random click fires 0–${fmt(stepMil)} mils of target travel late, ${fmt(stepMil / 2)} on average.`;
+  }
+
+  // ---------- tables ----------
+  function tables() {
+    const vj = 2000 / 3.6, vt = 80 / 3.6, Lj = 16, Lt = 7;
+    // [name, ms jet, ms tank, source]; null = not measured for that vehicle
+    const rows = [
+      ["One game step (jet 48 Hz, tank 24 Hz)", 1000 / 48, 1000 / 24, "m"],
+      ["Your ping, round trip", 65, 65, "m"],
+      ["Buffer on the other player's events, about 2 ticks (ground)", null, 100, "e"],
+      ["Click to your own gunshot sound", 148, 150, "m"],
+      ["Other player's action to your screen, on top of the local chain", 170, 160, "m"],
+      ["Click to gunshot heard on the other PC", 318, 315, "m"],
+    ];
+    const maxLen = vj * 0.318 / Lj;
+    const f0 = (x) => fmt(x, x % 1 ? 1 : 0);
+    const ms = (a, b) => a == null ? "– / " + f0(b) : (Math.abs(a - b) < 0.5 ? f0(a) : f0(a) + " / " + f0(b));
+    $("dist").innerHTML = rows.map(([name, mj, mt, src]) => {
+      const dj = mj == null ? null : vj * mj / 1000, dt = vt * mt / 1000;
+      return `<tr><td>${name}</td><td class="n">${ms(mj, mt)}</td><td class="n">${dj == null ? "–" : fmt(dj) + " m"}</td><td class="n">${fmt(dt, 2)} m</td>`
+        + `<td class="barcell"><div><span class="bar" style="width:${dj == null ? 0 : (dj / Lj) / maxLen * 100}%"></span>`
+        + `<span class="bar tank" style="width:${(dt / Lt) / maxLen * 100}%"></span></div>`
+        + `<span class="note num">${dj == null ? "–" : fmt(dj / Lj, 2)} / ${fmt(dt / Lt, 2)}</span></td>`
+        + `<td><span class="tag ${src}">${src === "m" ? "measured" : "estimated"}</span></td></tr>`;
+    }).join("");
+    const man = [["Jet, 9 g break", 9 * 9.81, 1 / 48, 0.17], ["Jet, 5 g turn", 5 * 9.81, 1 / 48, 0.17], ["Tank, hard brake (0.6 g)", 0.6 * 9.81, 1 / 24, 0.16]];
+    const err = (a, t) => { const e = 0.5 * a * t * t; return e < 0.1 ? fmt(e * 100, 1) + " cm" : fmt(e, 2) + " m"; };
+    $("turn").innerHTML = man.map(([n, a, st, lt]) => `<tr><td>${n}</td><td class="n">${err(a, st)}</td><td class="n">${err(a, 0.1)}</td><td class="n">${err(a, lt)}</td></tr>`).join("");
+  }
+
+  // ---------- controls ----------
+  function setSeg(id, val) { document.querySelectorAll("#" + id + " button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === val))); }
+  function syncDirs() {
+    const T = TARGETS[S.target];
+    document.querySelectorAll("#dir button").forEach(b => { b.disabled = !T.dirs.includes(b.dataset.v); });
+    if (!T.dirs.includes(S.dir)) { S.dir = "right"; setSeg("dir", "right"); }
+  }
+  document.querySelectorAll("#tgt button").forEach(b => b.addEventListener("click", () => {
+    S.target = b.dataset.v; setSeg("tgt", S.target); syncDirs(); resetT(); readout(); drawSight();
+  }));
+  document.querySelectorAll("#dir button").forEach(b => b.addEventListener("click", () => { if (b.disabled) return; S.dir = b.dataset.v; setSeg("dir", S.dir); }));
+  $("slow").addEventListener("change", e => { S.slow = +e.target.value; });
+  $("fire").addEventListener("click", fire);
+  $("pause").addEventListener("click", () => { S.paused = !S.paused; $("pause").textContent = S.paused ? "Play" : "Pause"; });
+  document.addEventListener("keydown", e => {
+    if ((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) fire();
+  });
+  $("range").addEventListener("input", drawSight);
+  $("show-ticks").addEventListener("change", e => S.show.ticks = e.target.checked);
+  $("show-latest").addEventListener("change", e => S.show.latest = e.target.checked);
+  $("show-late").addEventListener("change", e => S.show.late = e.target.checked);
+  window.addEventListener("resize", drawSight);
+  if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", drawSight);
+  new MutationObserver(drawSight).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawSight);
+
+  if (S.paused) $("pause").textContent = "Play";
+  resetT(); tables(); drawSight(); readout();
+  requestAnimationFrame(frame);
+})();
+</script>

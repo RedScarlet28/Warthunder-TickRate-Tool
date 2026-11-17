@@ -1,0 +1,16 @@
+{
+  "buffers": 123202,
+  "rate_nominal": 48000,
+  "rate_effective": 47999.463,
+  "drift_ppm": -11.19,
+  "delivery_gaps": 5,
+  "missing_time_s": 0.52,
+  "segments": 7,
+  "down_steps": 1,
+  "arrival_jitter_ms_p50": 5.286,
+  "arrival_jitter_ms_p99": 10.818,
+  "onsets_all": 2195,
+  "burst_gap_ms": 150,
+  "onsets": 1200,
+  "mixer_block": "not detected (too few onsets or no block locking)"
+}

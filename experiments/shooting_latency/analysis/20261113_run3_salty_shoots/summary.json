@@ -1,0 +1,115 @@
+{
+  "presses_total": 241,
+  "presses_isolated": 218,
+  "matched_remote": 165,
+  "observer_video_sync": {
+    "mode": "audio",
+    "onsets": 1606,
+    "mixer_block_ms": 0.0
+  },
+  "shooter_clock": null,
+  "observer_clock": {
+    "windows": 202,
+    "offset_ms_median": -975.3101,
+    "offset_ms_range": 18.942,
+    "rtt_ms_p5": 0.2889
+  },
+  "remote_delay_ms": {
+    "p5": 286.39,
+    "p25": 308.77,
+    "p50": 325.98,
+    "p75": 343.04,
+    "p95": 375.56
+  },
+  "remote_fit": {
+    "K1": {
+      "c_ms": 277.07,
+      "T_ms": 89.5,
+      "sigma_ms": 8.0,
+      "K": 1,
+      "LL": -797.79
+    },
+    "K2": {
+      "c_ms": 252.77,
+      "T_ms": 67.0,
+      "sigma_ms": 8.0,
+      "K": 2,
+      "LL": -786.59
+    },
+    "best_K": 2,
+    "T_ms": 67.0,
+    "T_ms_CI95": [
+      53.42,
+      73.26
+    ],
+    "implied_Hz": 14.93,
+    "n": 165
+  },
+  "remote_onset_rayleigh_peaks_hz": [
+    {
+      "hz": 56.1,
+      "Z": 8.3,
+      "frame_artifact": false
+    },
+    {
+      "hz": 83.18,
+      "Z": 7.6,
+      "frame_artifact": false
+    },
+    {
+      "hz": 93.75,
+      "Z": 7.4,
+      "frame_artifact": true
+    },
+    {
+      "hz": 102.32,
+      "Z": 7.3,
+      "frame_artifact": false
+    },
+    {
+      "hz": 53.81,
+      "Z": 7.2,
+      "frame_artifact": false
+    }
+  ],
+  "packets_observer": {
+    "flow": "185.253.20.248:20035",
+    "up_pps": 45.25,
+    "down_pps": 31.18,
+    "last_downstream_to_onset_ms": {
+      "p5": 1.83,
+      "p50": 18.03,
+      "p95": 38.61
+    },
+    "downstream_rayleigh_peaks_hz": [
+      [
+        24.29,
+        315.8
+      ],
+      [
+        98.5,
+        184.9
+      ],
+      [
+        74.33,
+        138.1
+      ],
+      [
+        122.89,
+        101.9
+      ],
+      [
+        50.04,
+        95.5
+      ]
+    ]
+  },
+  "verdict": {
+    "fold_period_ms": 17.83,
+    "fold_Z": 8.3,
+    "fit_period_ms": 67.0,
+    "period_ms": 67.0,
+    "status": "FIT-ONLY: no strong phase-locked peak (tick may not be phase-stable, or too few presses)",
+    "implied_Hz": 14.93
+  }
+}

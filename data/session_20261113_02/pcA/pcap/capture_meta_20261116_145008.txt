@@ -1,0 +1,11 @@
+﻿start_utc=2026-11-16T13:50:08.0738770Z
+Leap Indicator: 0(no warning)
+Stratum: 5 (secondary reference - syncd by (S)NTP)
+Precision: -23 (119.209ns per tick)
+Root Delay: 0.0153173s
+Root Dispersion: 8.3332512s
+ReferenceId: 0x14653909 (source IP:  20.101.57.9)
+Last Successful Sync Time: 11/16/2026 10:52:44 AM
+Source: time.windows.com,0x9 
+Poll Interval: 10 (1024s)
+

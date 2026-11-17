@@ -1,0 +1,18 @@
+{
+  "buffers": 76207,
+  "rate_nominal": 48000,
+  "rate_effective": 47997.673,
+  "drift_ppm": -48.49,
+  "arrival_jitter_ms_p50": 6.156,
+  "arrival_jitter_ms_p99": 13.701,
+  "loopback_steps": 1,
+  "envelope_resid_ms_p5_after_piecewise": 0.095,
+  "onsets_all": 1460,
+  "burst_gap_ms": 150,
+  "onsets": 960,
+  "mixer_block": {
+    "samples": 512,
+    "ms": 10.6667,
+    "Z": 23.0
+  }
+}

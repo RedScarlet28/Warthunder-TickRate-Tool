@@ -1,0 +1,51 @@
+# ---------------------------------------------------------------------------
+# Large media and raw capture data.
+# These are deliberately kept out of git: GitHub blocks files over 100 MB,
+# and the video folder alone is ~39 GB. Raw recordings are published as
+# GitHub Release assets instead.
+# ---------------------------------------------------------------------------
+video/
+
+# Raw audio recordings (100-250 MB each)
+*.wav
+*.flac
+
+# Raw telemetry / marker logs (one is 113 MB)
+*.jsonl
+
+# Video containers (any that escape video/)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.mxf
+
+# NLE / compositing project files
+*.prproj
+*.aep
+*.drp
+
+# ---------------------------------------------------------------------------
+# Recorder runtime leftovers
+# ---------------------------------------------------------------------------
+*.stopped_*
+*_pids.json
+recording_pids.json
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# ---------------------------------------------------------------------------
+# OS / editor
+# ---------------------------------------------------------------------------
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
