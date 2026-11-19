@@ -1,0 +1,20 @@
+{
+  "buffers": 174248,
+  "rate_nominal": 48000,
+  "rate_effective": 47992.335,
+  "drift_ppm": -159.69,
+  "delivery_gaps": 1,
+  "missing_time_s": 0.15,
+  "segments": 3,
+  "down_steps": 1,
+  "arrival_jitter_ms_p50": 5.26,
+  "arrival_jitter_ms_p99": 10.675,
+  "onsets_all": 3269,
+  "burst_gap_ms": 0.0,
+  "onsets": 3269,
+  "mixer_block": {
+    "samples": 1024,
+    "ms": 21.3333,
+    "Z": 61.8
+  }
+}
